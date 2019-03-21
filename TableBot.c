@@ -134,11 +134,6 @@ task getRidOfArm(){
 	stopMotor(motArm);
 }
 
-void setMotors(tMotor m0, tMotor m1, int lvl){
-	motor[m0] = lvl;
-	motor[m1] = lvl;
-}
-
 void setMotors(int lvl){
 	motor[motLeft] = lvl;
 	motor[motRight] = lvl;

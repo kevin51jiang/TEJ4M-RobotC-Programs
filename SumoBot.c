@@ -24,24 +24,6 @@ void stopMoving(){
 	startMotor(motRight, 0);
 }
 
-void move(int dist){
-	int modifier;
-
-	if(dist > 0){
-		modifier = 1;
-		} else {
-		modifier = -1;
-		dist *= -1;
-	}
-
-	while(dist > 0) {
-		startMotor(motRight, 127 * modifier);
-		startMotor(motLeft, 127 * modifier);
-		wait1Msec(580);
-		dist--;
-	}
-	stopMoving();
-}
 
 void turn(char direction){
 	int modifier;
@@ -87,12 +69,6 @@ void jitterMove(int jitterTime, int duration){
 		jitter(motRight, motLeft, jitterTime);
 		whack();
 	}
-}
-
-task getRidOfArm(){
-	startMotor(motArm, -127);
-	wait1Msec(1250);
-	stopMotor(motArm);
 }
 
 

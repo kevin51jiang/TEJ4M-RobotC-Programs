@@ -125,9 +125,6 @@ void turn(char direction){
 void turnDegree(int degrees){
 	resetEncoders();
 	stopMoving();
-	int modifier;
-
-
 
 	wait1Msec(1200); // make sure robot is stopped
 	int numDegreeRot = degrees * 4;
@@ -203,20 +200,6 @@ int jitter(tMotor mPrimary, tMotor mSecondary, int jitterTime){
 	return sensorReading;
 }
 
-/**
-* jitterTime = time in ms for one half of a jitter cycle to happen (e.g. move from center to right and back to center)
-* duration = how long the whole jitter move should be in ms
-*/
-void jitterMove(int jitterTime, int duration){
-	int numJitter = duration / jitterTime;
-
-	for(int i = 0; i < numJitter / 2; i++) {
-		//jitter right
-		jitter(motLeft, motRight, jitterTime);
-		//jitter left
-		jitter(motRight, motLeft, jitterTime);
-	}
-}
 
 void actualJitterMove(int timePerJitter){
 	int leftReading, rightReading;
@@ -249,16 +232,7 @@ void turnUntilReset(){
 
 	stopMoving();
 }
-//turns to an aboluste degree relative to the robots starting heading
-void turnAbsDegree(int degree){
-	const int turnTolerance = 7;//0.7 degree each way
 
-	while(abs(SensorValue[gyro] % 3600) < turnTolerance + (degree * 10)
-					&& abs(SensorValue[gyro] % 3600) > turnTolerance - (degree * 10)){
-		motor[motRight] = -1 * turnSpeed;
-		motor[motLeft] = turnSpeed;
-	}
-}
 
 //////////////////////////////////////
 ////////////////////////////////////

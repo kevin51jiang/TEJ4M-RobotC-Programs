@@ -15,111 +15,12 @@
 const int baseSpeed = 35;
 
 
-void resetEncoders(){
-	//Reset encoder values to zero
-	SensorValue[encodeRight] = 0;
-	SensorValue[encodeLeft] = 0;
-}
-
 void stopMoving(){
 
 	startMotor(motLeft, 0);
 	startMotor(motRight, 0);
 	wait1Msec(250);
 }
-
-
-//distance in inches
-void move(int dist){
-	int modifier;
-
-	if(dist > 0){
-		modifier = 1;
-		} else {
-		modifier = -1;
-		dist *= -1;
-	}
-
-	/*
-	//convert distance into number of rotations
-	float numRot = dist / 6.926;
-	//convert number of rotations into degrees
-	int numDegreeRot = 360 * numRot;
-*/
-	float numDegreeRot = (360 / 6.926) * dist;
-
-
-	resetEncoders();
-	//do the actual moving
-	while(abs(SensorValue[encodeRight]) < abs(numDegreeRot) ||
-		abs(SensorValue[encodeLeft]) < abs(numDegreeRot)){
-
-			if(SensorValue[sonar] > 15 || SensorValue[sonar] == -1){
-
-				//left wheels
-				if(abs(SensorValue[encodeRight]) < abs(numDegreeRot)) {
-					startMotor(motLeft, 127 * modifier);
-					} else {
-					stopMotor(motLeft);
-				}
-				//right wheels
-				if(abs(SensorValue[encodeLeft]) < abs(numDegreeRot)) {
-					startMotor(motRight, 127 * modifier);
-					} else {
-					stopMotor(motRight);
-				}
-			} else {
-				clearLCDLine(0);
-				displayNextLCDString("Object Detected!");
-				stopMoving();
-
-			}
-
-	}
-	stopMoving();
-}
-
-void turn(char direction){
-	resetEncoders();
-	stopMoving();
-	int modifier;
-
-
-
-	wait1Msec(1200); // make sure robot is stopped
-	const int numDegreeRot = 362;
-
-
-	if(direction == 'l'){ //turn left
-		modifier = -1;
-		} else { // turn right
-		modifier = 1;
-	}
-	resetEncoders();
-	//do the actual moving
-	while(abs(SensorValue[encodeRight]) < abs(numDegreeRot) ||
-		abs(SensorValue[encodeLeft]) < abs(numDegreeRot)){
-
-
-				//left wheels
-				if(abs(SensorValue[encodeLeft]) < abs(numDegreeRot)) {
-					startMotor(motLeft, 63 * modifier);
-					} else {
-					stopMotor(motLeft);
-				}
-				//right wheels
-				if(abs(SensorValue[encodeRight]) < abs(numDegreeRot)) {
-					startMotor(motRight, 63 * -1 * modifier);
-					} else {
-					motor[motRight] = 0;
-
-				}
-		wait1Msec(50);
-
-	}
-	stopMoving();
-}
-
 
 task getRidOfArm(){
 	startMotor(motArm, -127);
@@ -135,14 +36,14 @@ task main()
 	while(SensorValue[sonar] == -1){
 		motor[motRight] = baseSpeed;
 		motor[motLeft] = baseSpeed;
-		writeDebugStreamLine(SensorValue[sonar]);
+
 	}
 
 	while(SensorValue[sonar] > 2){
 		motor[motRight] = SensorValue[sonar];
 		motor[motLeft] = SensorValue[sonar] ;
 		wait1Msec(50);
-		writeDebugStreamLine(SensorValue[sonar]);
+
 	}
 	stopMoving();
 

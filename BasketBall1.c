@@ -28,8 +28,6 @@ void move(int dist){
 
 }
 
-void turn
-
 
 task main()
 {
