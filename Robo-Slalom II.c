@@ -142,7 +142,7 @@ int jitter(tMotor mPrimary, tMotor mSecondary, int jitterTime){
 	wait1Msec(jitterTime / 2);
 	stopMotor(mPrimary);
 	stopMoving();
-	int sensorReading = SensorValue[rightLine];
+	int sensorReading = SensorValue[midLine];
 	startMotor(mPrimary, -1 * speed);
 	startMotor(mSecondary, speed);
 	wait1Msec(jitterTime / 2);
