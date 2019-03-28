@@ -23,6 +23,14 @@ const int baseSpeed = 120;
 const int turnSpeed = 70;
 const int waitTime = 50;
 
+
+task getRidOfArm(){
+	startMotor(motArm, -127);
+	wait1Msec(1250);
+	stopMotor(motArm);
+}
+
+
 void resetEncoders(){
 	//Reset encoder values to zero
 	SensorValue[encodeRight] = 0;
