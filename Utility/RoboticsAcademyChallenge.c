@@ -6,7 +6,7 @@
 #pragma config(Sensor, in6,    armPot,         sensorPotentiometer)
 #pragma config(Sensor, dgtl1,  encodeRight,    sensorQuadEncoder)
 #pragma config(Sensor, dgtl3,  encodeLeft,     sensorQuadEncoder)
-#pragma config(Sensor, dgtl6,  touchSensor,    sensorTouch)
+#pragma config(Sensor, dgtl6,  touchSense,     sensorTouch)
 #pragma config(Sensor, dgtl8,  sonar,          sensorSONAR_cm)
 #pragma config(Sensor, I2C_1,  rightIME,       sensorQuadEncoderOnI2CPort,    , AutoAssign )
 #pragma config(Sensor, I2C_2,  leftIME,        sensorQuadEncoderOnI2CPort,    , AutoAssign )
@@ -21,7 +21,7 @@
 
 const int baseSpeed = 120;
 const int turnSpeed = 35;
-const int waitTime = 50; //waiting between sensor checks
+const int waitTime = 25; //waiting between sensor checks
 const int restTime = 1000;//rest time in between commands
 
 
@@ -152,7 +152,7 @@ void forwardUntilBigEnough(tMotor m1, tMotor m2, tSensors sensor, int desiredVal
 
 void forwardUntilSmallEnough(tMotor m1, tMotor m2, tSensors sensor, int desiredVal){
 
-	while(SensorValue[sensor] > desiredVal && SensorValue[sensor] != -1){
+	while(SensorValue[sensor] > desiredVal || SensorValue[sensor] == -1){
 		setMotors(m1, m2, baseSpeed);
 		wait1Msec(waitTime);
 	}
@@ -210,53 +210,36 @@ void setMotorToPos(tMotor m1, tSensors pot, int desiredEncoderPos){
 
 }
 
-
-int jitter(tMotor mPrimary, tMotor mSecondary, int jitterTime){
-	const int speed = 63;
-	startMotor(mPrimary, speed);
-	startMotor(mSecondary, -1 * speed);
-	wait1Msec(jitterTime / 2);
-	stopMotor(mPrimary);
-	stopMoving();
-	int sensorReading = SensorValue[midLine];
-	startMotor(mPrimary, -1 * speed);
-	startMotor(mSecondary, speed);
-	wait1Msec(jitterTime / 2);
-	stopMoving();
-	datalogAddValueWithTimeStamp(0, sensorReading);
-	return sensorReading;
-}
-
-
-void actualJitterMove(tMotor m1, tMotor m2, int timePerJitter){
-	int leftReading, rightReading;
-	leftReading = jitter(m1, m2, timePerJitter);
-
-	rightReading = jitter(m1, m2, timePerJitter);
-	tMotor toMove;
-	if(leftReading > rightReading){
-		toMove = m2;
-		} else {
-		toMove = m1;
-	}
-
-	motor[toMove] = baseSpeed;
-	wait1Msec(timePerJitter * 3/4);
-	stopMotor(toMove);
-	wait1Msec(50);
-}
-
-
-void jitterUntilSmallEnough(tMotor m1, tMotor m2, tSensors sensor, int desiredVal){
+void lineFollowUntilSmallEnough(tMotor m1, tMotor m2, tSensors sensor, int desiredVal){
 	const int TIMEPERJITTER = 160; //160ms
 	while(SensorValue[sensor] > desiredVal && SensorValue[sensor] != -1){
-		actualJitterMove(m1, m2, TIMEPERJITTER);
+		if(SensorValue[leftLine] > SensorValue[rightLine]){
+			motor[m1] = 20;
+			motor[m2] = 63;
+		} else {
+			motor[m1] = 63;
+			motor[m2] = 20;
+		}
+
 	}
 	setMotors(m1, m2, 0);
-
-
 }
 
+
+void lineFollowUntilEqual(tMotor m1, tMotor m2, tSensors sensor, int desiredVal, int tolerance){
+
+	while(abs(SensorValue[sensor] - desiredVal) > tolerance){
+		if(SensorValue[leftLine] > SensorValue[rightLine]){
+			motor[m1] = 20;
+			motor[m2] = 63;
+		} else {
+			motor[m1] = 63;
+			motor[m2] = 20;
+		}
+
+	}
+	setMotors(m1, m2, 0);
+}
 
 
 
@@ -313,6 +296,8 @@ task main() {
 		move(4);//move across that black line
 		forwardUntilBigEnough(motLeft, motRight, midLine, BLACK);
 	}
+
+
 	//deposit ball in hoop
 	wait1Msec(restTime);
 	setHeading(90);
@@ -325,26 +310,41 @@ task main() {
 	motor[motArm] = 0;
 	move(-6);//move 6 inches back
 	turnUntilReset();//reset heading
+	move(5); //move robot past black line
 
-
-	//move across 5 lines
-	for(int i = 0; i < 5; i++){
+	//move towards the semicircle
+	for(int i = 0; i < 4; i++){
+		move(3);
 		forwardUntilBigEnough(motLeft, motRight, midLine, BLACK);
 	}
 
-	jitterUntilSmallEnough(motLeft, motRight, sonar, 15);//follow line until robot is roughly 6 inches away from wall
+	//set it oriented in roughly the right direction, and move forward until it hits black again
+	setHeading(50);
+	forwardUntilBigEnough(motLeft, motRight, midLine, BLACK);
+
+	lineFollowUntilSmallEnough(motLeft, motRight, sonar, 4);//follow line until robot hits wall
+	move(-5);
 	turnUntilReset();//reset heading
 	move(5);//move across the 1st line
 
 	//move across 5 lines
-	for(int i = 0; i < 4; i++){
+	for(int i = 0; i < 5; i++){
+		move(3);
 		forwardUntilBigEnough(motLeft, motRight, midLine, BLACK);
 	}
 
 	setHeading(270);//turn left
+	wait1Msec(restTime);
+	move(12 * 3);
+	forwardUntilBigEnough(motLeft, motRight, midLine, BLACK);
 
+	turnUntilReset();
+	forwardUntilBigEnough(motLeft, motRight, midLine, BLACK);//hit last arrow
+	setHeading(300);
+	lineFollowUntilEqual(motLeft, motRight, gyro, 1800, 5);//until the direction is reversed
 
-	wait(9999);
+	forwardUntilSmallEnough(motLeft, motRight, sonar, 10);//move forward until almost hit the wall in the scorebox
+
 
 
 
