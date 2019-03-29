@@ -159,15 +159,12 @@ void setMotorToPos(tMotor m1, tSensors pot, int desiredEncoderPos){
 
 	// set the correct direction for the motor movement
 	if(SensorValue[pot] == desiredEncoderPos) {
-
 		return; //nothing to do if they're already equal
 
 	} else if(SensorValue[pot] < desiredEncoderPos) { // means want to move it upwards (relative to the horizontal starting position)
-
 		direction = 1;
 
 	} else {
-
 		direction = -1; // the arm should move downwards (relative to the horizontal starting position)
 
 	}
