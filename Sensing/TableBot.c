@@ -23,7 +23,7 @@ const int baseSpeed = 70; //a base movement speed for the robot to go.
 							// is in a constant for easy configuration/customization
 
 /**
- * Resets the left and right encoders to zero 
+ * Resets the left and right encoders to zero
  * Useful for the distance based movement methods.
  */
 void resetEncoders(){
@@ -93,7 +93,7 @@ void move(int dist){
 }
 
 /**
- * Turn in a  direction. 
+ * Turn in a direction.
  * Since the point of this challenge is just to move around, the direction given as a parameter is a suggestion.
  */
 void turn(char direction){
@@ -104,7 +104,7 @@ void turn(char direction){
 	resetEncoders(); //make sure encoder values are clean for the turn
 
 	wait1Msec(1200); // make sure robot is stopped
-	
+
 	if(direction == 'l'){ //turn "left"
 		modifier = -1;
 		} else { // turn "right"
@@ -113,7 +113,7 @@ void turn(char direction){
 	resetEncoders();
 
 	//while any one of them haven't reached their turning quotas...
-	while(abs(SensorValue[encodeRight]) < abs(numDegreeRot) || 
+	while(abs(SensorValue[encodeRight]) < abs(numDegreeRot) ||
 		abs(SensorValue[encodeLeft]) < abs(numDegreeRot)){
 
 
@@ -164,7 +164,7 @@ task main() {
 	const int BLACK = 2000; //if the line follower has a reading of >2000, then it is over a black line
 	startTask(getRidOfArm); //get rid of the arm since it isn't necessary
 
-	
+
 	while(true){
 		//while not black line, move forwards
 		while(SensorValue[midLine] < BLACK) {
