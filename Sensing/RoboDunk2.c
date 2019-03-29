@@ -1,3 +1,10 @@
+/**
+ * Kevin Jiang
+ * March 29 2019
+ * Moves to the center, grabs the ball, moves to the net, and drops the ball in the net.
+ * Makes use of the gyro, potentiometer sensors and the motor encoders.
+ */
+ 
 #pragma config(I2C_Usage, I2C1, i2cSensors)
 #pragma config(Sensor, in1,    leftLine,       sensorLineFollower)
 #pragma config(Sensor, in2,    midLine,        sensorLineFollower)

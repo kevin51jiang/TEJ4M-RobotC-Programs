@@ -1,3 +1,11 @@
+/**
+ * Kevin Jiang
+ * March 29 2019
+ * The robot moves forward towards the wall.
+ * The robot's speed is set proportional to the distance from the wall.
+ * Makes use of the sonar sensor.
+ */
+
 #pragma config(StandardModel, "SQUAREBOT")
 #pragma config(RenamedStdModelMotor, port2, motRight)
 #pragma config(RenamedStdModelMotor, port3, motLeft)

@@ -1,3 +1,10 @@
+/**
+ * Kevin Jiang
+ * March 29 2019
+ * Moves around the perimeter of a square two complete times.
+ * Does not make use of any sensors.
+ */
+
 #pragma config(StandardModel, "SQUAREBOT")
 #pragma config(RenamedStdModelMotor, port2, motRight)
 #pragma config(RenamedStdModelMotor, port3, motLeft)

@@ -1,3 +1,11 @@
+/**
+ * Kevin Jiang
+ * March 29 2019
+ * Guides the robot from Point A to the finish without crossing over any black lines.
+ * Makes use of the motor encoders.
+ */
+
+
 #pragma config(StandardModel, "SQUAREBOT")
 #pragma config(RenamedStdModelMotor, port2, motRight)
 #pragma config(RenamedStdModelMotor, port3, motLeft)

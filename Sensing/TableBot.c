@@ -1,3 +1,13 @@
+/**
+ * Kevin Jiang
+ * March 29 2019
+ * The robot moves forward until it hits the edge.
+ * It then moves back, turns, and moves forward again.
+ * This is continued until the time runs out.
+ * Makes use of the motor encoders.
+ */
+
+
 #pragma config(I2C_Usage, I2C1, i2cSensors)
 #pragma config(Sensor, in1,    leftLine,       sensorLineFollower)
 #pragma config(Sensor, in2,    midLine,        sensorLineFollower)

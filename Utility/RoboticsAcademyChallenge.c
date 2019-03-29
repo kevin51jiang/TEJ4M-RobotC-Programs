@@ -1,3 +1,12 @@
+/**
+ * Kevin Jiang
+ * March 29 2019
+ * Completes the robotics academy challenge.
+ * Picks up the ball, drops it in the hoop, follows the line, and makes it to the finish line.
+ * Makes use of gyro, motor encoder/potentiometers, and sonar sensors.
+ */
+
+
 #pragma config(I2C_Usage, I2C1, i2cSensors)
 #pragma config(Sensor, in1,    leftLine,       sensorLineFollower)
 #pragma config(Sensor, in2,    midLine,        sensorLineFollower)
