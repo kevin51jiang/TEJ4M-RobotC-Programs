@@ -139,7 +139,7 @@ void setHeading(int degreesHeading){
 	const int turnTolerance = 1; //tolerance level of 1 degree in each direction
 
 	// while the difference between the gyro reading in degrees and the destination degrees is greater than the tolerance
-	while(abs(SensorValue[gyro] / 10 - degreesHeading) > turnTolerance ){ 
+	while(abs(SensorValue[gyro] / 10 - degreesHeading) > turnTolerance ){
 		//keep turning clockwise
 		motor[motRight] = -1 * turnSpeed;
 		motor[motLeft] = turnSpeed;
@@ -159,15 +159,15 @@ void setMotorToPos(tMotor m1, tSensors pot, int desiredEncoderPos){
 
 	// set the correct direction for the motor movement
 	if(SensorValue[pot] == desiredEncoderPos) {
-		
+
 		return; //nothing to do if they're already equal
-		
+
 	} else if(SensorValue[pot] < desiredEncoderPos) { // means want to move it upwards (relative to the horizontal starting position)
-		
+
 		direction = 1;
 
 	} else {
-		
+
 		direction = -1; // the arm should move downwards (relative to the horizontal starting position)
 
 	}
@@ -176,7 +176,7 @@ void setMotorToPos(tMotor m1, tSensors pot, int desiredEncoderPos){
 	while(abs(SensorValue[pot] - desiredEncoderPos) > 10 / 2) {
 		// use turnspeed since it's slower (should be more accurate)
 		// especially important because the arm motor can't just wrap around like the movement motors can
-		motor[m1] = direction * turnSpeed;	
+		motor[m1] = direction * turnSpeed;
 	}
 
 	motor[m1] = 0; //stop the motor once it's at the right position to keep this method self contained.
@@ -211,9 +211,8 @@ task main() {
 	wait1Msec(1000);
 	turnUntilReset(); // turn right
 	wait1Msec(1000);
-	move(2); // move 2 inches forward
+	move(1); // move 1 inch forward
 	wait1Msec(1000);
 	setMotorToPos(motArm, armPot, ALLDOWN); // drop the arm to allow the ball to roll off into the hoop
 
 }
- 
