@@ -14,14 +14,18 @@
 
 const int baseSpeed = 35;
 
-
+/**
+ * Sets the left and right motor speeds to 0
+ */
 void stopMoving(){
-
 	startMotor(motLeft, 0);
 	startMotor(motRight, 0);
 	wait1Msec(250);
 }
 
+/**
+ * Gets rid of the arm since it isn't needed in this challenge
+ */
 task getRidOfArm(){
 	startMotor(motArm, -127);
 	wait1Msec(1250);
@@ -30,21 +34,23 @@ task getRidOfArm(){
 
 task main()
 {
-	startTask(getRidOfArm);
+	startTask(getRidOfArm); //get rid of useless arm
 
-	//while no object is detected, just move forward
-	while(SensorValue[sonar] == -1){
+	//keep going forward until the ultrasonic sensor detects an object
+	while(SensorValue[sonar] == -1){  
 		motor[motRight] = baseSpeed;
 		motor[motLeft] = baseSpeed;
 
 	}
 
+	// while the distance is >2cm, set the motor speed to be equal to the robot's distance from the object
 	while(SensorValue[sonar] > 2){
 		motor[motRight] = SensorValue[sonar];
 		motor[motLeft] = SensorValue[sonar] ;
 		wait1Msec(50);
-
 	}
+
+	// if it's less than 2cm, then stop the robot from moving
 	stopMoving();
 
 }
