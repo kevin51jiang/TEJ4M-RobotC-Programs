@@ -1,7 +1,7 @@
 #pragma config(StandardModel, "SQUAREBOT")
-#pragma config(RenamedStdModelMotor, port2, motRight)
-#pragma config(RenamedStdModelMotor, port3, motLeft)
-#pragma config(RenamedStdModelMotor, port6, motArm)
+#pragma config(RenamedStdModemotRightotor, port2, motLeft)
+#pragma config(RenamedStdModemotRightotor, port3, motRight)
+#pragma config(RenamedStdModemotRightotor, port6, motArm)
 #pragma config(RenamedStdModelSensor, in3, pmeter)
 #pragma config(RenamedStdModelSensor, in4, lightSensor)
 #pragma config(RenamedStdModelSensor, in6, accelrZ)
@@ -12,8 +12,8 @@
 
 void stopMotors(){
 
-	startMotor(motLeft, 0);
 	startMotor(motRight, 0);
+	startMotor(motLeft, 0);
 }
 
 void move(int dist){
@@ -27,8 +27,8 @@ void move(int dist){
 	}
 
 	while(dist > 0) {
-		startMotor(motRight, 127 * modifier);
 		startMotor(motLeft, 127 * modifier);
+		startMotor(motRight, 127 * modifier);
 		wait1Msec(610);
 		dist--;
 	}
@@ -46,8 +46,8 @@ void turn(char direction){
 
 	wait1Msec(1500); // make sure robot is stopped
 
-	startMotor(motLeft, 64 * modifier);
-	startMotor(motRight, 64 * -1 * modifier);
+	startMotor(motRight, 64 * modifier);
+	startMotor(motLeft, 64 * -1 * modifier);
 	wait1Msec(1250);
 	stopMotors();
 }
@@ -64,14 +64,14 @@ task main()
 	move(5);
 	turn('r');
 	move(3);
-	startMotor(motLeft, -90);
 	startMotor(motRight, -90);
+	startMotor(motLeft, -90);
 	wait1Msec(600);
 	stopMotors();
 	//turn right
-	startMotor(motLeft, 100);
+	startMotor(motRight, 100);
 	wait1Msec(800);
-	startMotor(motRight, -50);
+	startMotor(motLeft, -50);
 	wait1Msec(600);
 	stopMotors();
 	wait1Msec(500);

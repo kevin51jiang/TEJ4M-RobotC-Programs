@@ -3,16 +3,16 @@
 #pragma config(Sensor, in2,    midLine,        sensorLineFollower)
 #pragma config(Sensor, in3,    rightLine,      sensorLineFollower)
 #pragma config(Sensor, in4,    gyro,           sensorGyro)
-#pragma config(Sensor, in6,    armPot,         sensorPotentiometer)
+#pragma config(Sensor, in6,    amotLeftPot,         sensorPotentiometer)
 #pragma config(Sensor, dgtl1,  encodeRight,    sensorQuadEncoder)
 #pragma config(Sensor, dgtl3,  encodeLeft,     sensorQuadEncoder)
 #pragma config(Sensor, dgtl6,  touchSense,     sensorTouch)
 #pragma config(Sensor, dgtl8,  sonar,          sensorSONAR_cm)
 #pragma config(Sensor, I2C_1,  rightIME,       sensorQuadEncoderOnI2CPort,    , AutoAssign )
 #pragma config(Sensor, I2C_2,  leftIME,        sensorQuadEncoderOnI2CPort,    , AutoAssign )
-#pragma config(Sensor, I2C_3,  armIME,         sensorQuadEncoderOnI2CPort,    , AutoAssign )
-#pragma config(Motor,  port2,           motRight,      tmotorVex393_MC29, openLoop, reversed, driveRight, encoderPort, I2C_1)
-#pragma config(Motor,  port3,           motLeft,       tmotorVex393_MC29, openLoop, driveLeft, encoderPort, I2C_2)
+#pragma config(Sensor, I2C_3,  amotLeftIME,         sensorQuadEncoderOnI2CPort,    , AutoAssign )
+#pragma config(Motor,  port2,           motLeft,      tmotorVex393_MC29, openLoop, reversed, driveRight, encoderPort, I2C_1)
+#pragma config(Motor,  port3,           motRight,       tmotorVex393_MC29, openLoop, driveLeft, encoderPort, I2C_2)
 #pragma config(Motor,  port6,           motArm,        tmotorVex393_MC29, openLoop, encoderPort, I2C_3)
 #pragma config(DatalogSeries, 0, "LeftFollow", Sensors, Sensor, in1, 50)
 #pragma config(DatalogSeries, 1, "MidFollow", Sensors, Sensor, in2, 50)
@@ -51,8 +51,8 @@ void resetEncoders(){
  * Stops the robot from moving.
  */
 void stopMoving(){
-	startMotor(motLeft, 0);
 	startMotor(motRight, 0);
+	startMotor(motLeft, 0);
 }
 
 
@@ -88,16 +88,16 @@ void move(int dist){
 
 		//left wheels
 		if(abs(SensorValue[encodeRight]) < abs(numDegreeRot)) {
-			startMotor(motLeft, 127 * modifier); //if the left wheels haven't reached their rotation quota, keep them rotating
+			startMotor(motRight, 127 * modifier); //if the left wheels haven't reached their rotation quota, keep them rotating
 			} else {
-			stopMotor(motLeft); //if they have, stop the left wheels
+			stopMotor(motRight); //if they have, stop the left wheels
 		}
 
 		//right wheels
 		if(abs(SensorValue[encodeLeft]) < abs(numDegreeRot)) {
-			startMotor(motRight, 127 * modifier); //if the right wheels haven't reached their rotation quota, keep them rotating
+			startMotor(motLeft, 127 * modifier); //if the right wheels haven't reached their rotation quota, keep them rotating
 			} else {
-			stopMotor(motRight); //if they have, stop the right wheels
+			stopMotor(motLeft); //if they have, stop the right wheels
 		}
 	}
 
@@ -157,8 +157,8 @@ void turnUntilReset(){
 
 	while(abs(SensorValue[gyro] % 3600) > turnTolerance ){ //while it is not within the tolerance level relative to zero degrees ...
 		// continuously clockwise
-		motor[motRight] = -1 * turnSpeed;
-		motor[motLeft] = turnSpeed;
+		motor[motLeft] = -1 * turnSpeed;
+		motor[motRight] = turnSpeed;
 	}
 
 	//stop the motors to keep this method self contained.
@@ -176,20 +176,20 @@ void setHeading(int degreesHeading){
 	// while the difference between the gyro reading in degrees and the destination degrees is greater than the tolerance
 	while(abs(SensorValue[gyro] / 10 - degreesHeading) > turnTolerance ){ 
 		//keep turning clockwise
-		motor[motRight] = -1 * turnSpeed;
-		motor[motLeft] = turnSpeed;
+		motor[motLeft] = -1 * turnSpeed;
+		motor[motRight] = turnSpeed;
 		wait1Msec(100);
 	}
 
 	//stop the motors to keep this method self contained.
-	setMotors(motLeft, motRight, 0);
+	setMotors(motRight, motLeft, 0);
 }
 
 
 
 /**
  * Sets the motor, m1, to the desiredEncoderPos which is read from the sensor pot
- * The variables are named this way because it is mostly used with the robot arms / potentiometer
+ * The variables are named this way because it is mostly used with the robot amotLefts / potentiometer
  */
 void setMotorToPos(tMotor m1, tSensors pot, int desiredEncoderPos){
 	int direction;
@@ -205,14 +205,14 @@ void setMotorToPos(tMotor m1, tSensors pot, int desiredEncoderPos){
 
 	} else {
 		
-		direction = -1; // the arm should move downwards (relative to the horizontal starting position)
+		direction = -1; // the amotLeft should move downwards (relative to the horizontal starting position)
 
 	}
 
 	//get it so that it is within 50 steps of desired outcome
 	while(abs(SensorValue[pot] - desiredEncoderPos) > 50 / 2) {
 		// use turnspeed since it's slower (should be more accurate)
-		// especially important because the arm motor can't just wrap around like the movement motors can
+		// especially important because the amotLeft motor can't just wrap around like the movement motors can
 		motor[m1] = direction * turnSpeed;	
 	}
 
@@ -277,11 +277,11 @@ void lineFollowUntilEqual(tMotor m1, tMotor m2, tSensors sensor, int desiredVal,
 task main() {
 
 	// a bunch of constants related to sensors
-	const int HORIZONTAL = 3240, // Pot: moves the arm into a horizontal position
-						DIAGONAL = 2100,// Pot: moves arm ~45 degrees above horizontal
+	const int HORIZONTAL = 3240, // Pot: moves the amotLeft into a horizontal position
+						DIAGONAL = 2100,// Pot: moves amotLeft ~45 degrees above horizontal
 
 						BLACK = 2000, // Line sensor: anything higher than 2000 is black
-						PICKUPRANGE = 9;// Sonar: optimal range for picking objects up with arm. Cm.
+						PICKUPRANGE = 9;// Sonar: optimal range for picking objects up with amotLeft. Cm.
 
 	///////////////////////////////
 	// ------ INSTRUCTIONS ----- //
@@ -304,22 +304,22 @@ task main() {
 
 
 	move(4);//move cross the starting line
-	forwardUntilBigEnough(motLeft, motRight, midLine, BLACK);//move forward to the first line with the ball
+	forwardUntilBigEnough(motRight, motLeft, midLine, BLACK);//move forward to the first line with the ball
 	move(2);//center the robot
 	wait1Msec(restTime);
 
 	//pickup the ball
 	setHeading(90);//turn right
 	wait1Msec(restTime);
-	forwardUntilSmallEnough(motLeft, motRight, sonar, PICKUPRANGE); //move close enough to pole to pick up
-	setMotorToPos(motArm, armPot, DIAGONAL);//pickup the ball
+	forwardUntilSmallEnough(motRight, motLeft, sonar, PICKUPRANGE); //move close enough to pole to pick up
+	setMotorToPos(motArm, amotLeftPot, DIAGONAL);//pickup the ball
 	move(-6);//move 6 inches back
 	turnUntilReset();//reset heading
 
 	//move across 3 marker lines
 	for(int i = 0; i < 3; i++){
 		move(4);//move across that black line
-		forwardUntilBigEnough(motLeft, motRight, midLine, BLACK);
+		forwardUntilBigEnough(motRight, motLeft, midLine, BLACK);
 	}
 
 
@@ -327,11 +327,11 @@ task main() {
 	wait1Msec(restTime);
 	setHeading(90); // turn right
 	wait1Msec(restTime);
-	forwardUntilSmallEnough(motLeft, motRight, sonar, PICKUPRANGE); //move close enough to pole to pick up
-	setMotorToPos(motArm, armPot, HORIZONTAL);//drop the ball
+	forwardUntilSmallEnough(motRight, motLeft, sonar, PICKUPRANGE); //move close enough to pole to pick up
+	setMotorToPos(motArm, amotLeftPot, HORIZONTAL);//drop the ball
 	wait1Msec(2500);//wait for ball to drop
 	motor[motArm] = -127;
-	wait1Msec(2500);//wait for arm to retract
+	wait1Msec(2500);//wait for amotLeft to retract
 	motor[motArm] = 0;
 	move(-6);//move 6 inches back
 	turnUntilReset();//reset heading
@@ -340,14 +340,14 @@ task main() {
 	//move towards the semicircle
 	for(int i = 0; i < 4; i++){
 		move(3);
-		forwardUntilBigEnough(motLeft, motRight, midLine, BLACK);
+		forwardUntilBigEnough(motRight, motLeft, midLine, BLACK);
 	}
 
 	//set it oriented in roughly the right direction, and move forward until it hits black again
 	setHeading(50);
-	forwardUntilBigEnough(motLeft, motRight, midLine, BLACK);
+	forwardUntilBigEnough(motRight, motLeft, midLine, BLACK);
 
-	lineFollowUntilSmallEnough(motLeft, motRight, sonar, 4);//follow line until robot ALMOST hits wall
+	lineFollowUntilSmallEnough(motRight, motLeft, sonar, 4);//follow line until robot AmotRightOST hits wall
 	move(-5);
 	turnUntilReset();//reset heading
 	move(5);//move across the 1st line
@@ -355,7 +355,7 @@ task main() {
 	//move across 5 lines to reach the gap in between the walls
 	for(int i = 0; i < 5; i++){
 		move(3);
-		forwardUntilBigEnough(motLeft, motRight, midLine, BLACK);
+		forwardUntilBigEnough(motRight, motLeft, midLine, BLACK);
 	}
 
 	//turn left
@@ -364,19 +364,19 @@ task main() {
 
 	//move towards the first curved arrow
 	move(12 * 3);
-	forwardUntilBigEnough(motLeft, motRight, midLine, BLACK);
+	forwardUntilBigEnough(motRight, motLeft, midLine, BLACK);
 
 	//turn and move forward until it hits the second curved arrow
 	turnUntilReset();
-	forwardUntilBigEnough(motLeft, motRight, midLine, BLACK);//hit last arrow
+	forwardUntilBigEnough(motRight, motLeft, midLine, BLACK);//hit last arrow
 
 	//once it hits, change the heading so that it's slanted towards the line instead of perpendicular
 	setHeading(300);
 
 	//follow the line until it faces the opposite of when it started
-	lineFollowUntilEqual(motLeft, motRight, gyro, 1800, 5);//until the direction is reversed
+	lineFollowUntilEqual(motRight, motLeft, gyro, 1800, 5);//until the direction is reversed
 
 	//move forward until it is 10cm away from the wall
-	forwardUntilSmallEnough(motLeft, motRight, sonar, 10);//move forward until almost hit the wall in the scorebox
+	forwardUntilSmallEnough(motRight, motLeft, sonar, 10);//move forward until amotRightost hit the wall in the scorebox
 
 }

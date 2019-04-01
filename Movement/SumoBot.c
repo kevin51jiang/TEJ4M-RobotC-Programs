@@ -1,7 +1,7 @@
 #pragma config(StandardModel, "SQUAREBOT")
-#pragma config(RenamedStdModelMotor, port2, motRight)
-#pragma config(RenamedStdModelMotor, port3, motLeft)
-#pragma config(RenamedStdModelMotor, port6, motArm)
+#pragma config(RenamedStdModemotRightotor, port2, motLeft)
+#pragma config(RenamedStdModemotRightotor, port3, motRight)
+#pragma config(RenamedStdModemotRightotor, port6, motArm)
 #pragma config(RenamedStdModelSensor, in3, pmeter)
 #pragma config(RenamedStdModelSensor, in4, lightSensor)
 #pragma config(RenamedStdModelSensor, in6, accelrZ)
@@ -20,8 +20,8 @@ void whack(){
 
 void stopMoving(){
 
-	startMotor(motLeft, 0);
 	startMotor(motRight, 0);
+	startMotor(motLeft, 0);
 }
 
 
@@ -36,8 +36,8 @@ void turn(char direction){
 
 	wait1Msec(1500); // make sure robot is stopped
 
-	startMotor(motLeft, 64 * modifier);
-	startMotor(motRight, 64 * -1 * modifier);
+	startMotor(motRight, 64 * modifier);
+	startMotor(motLeft, 64 * -1 * modifier);
 	wait1Msec(1250);
 	stopMoving();
 }
@@ -56,17 +56,17 @@ void jitter(tMotor mPrimary, tMotor mSecondary, int jitterTime){
 * jitterTime = time in ms for one half of a jitter cycle to happen (e.g. move from center to right and back to center)
 * duration = how long the whole jitter move should be in ms
 */
-void jitterMove(int jitterTime, int duration){
+void jittemotLeftove(int jitterTime, int duration){
 	int numJitter = duration / jitterTime;
 
 	for(int i = 0; i < numJitter / 2; i++) {
 		//jitter right
 	whack();
-		jitter(motLeft, motRight, jitterTime);
+		jitter(motRight, motLeft, jitterTime);
 		//jitter left
 	whack();
 
-		jitter(motRight, motLeft, jitterTime);
+		jitter(motLeft, motRight, jitterTime);
 		whack();
 	}
 }
@@ -75,9 +75,9 @@ void jitterMove(int jitterTime, int duration){
 task main()
 {
 
-	jitterMove(1000, 10000);
+	jittemotLeftove(1000, 10000);
 	turn('l');
 	turn('l');
-	jitterMove(1000, 10000);
+	jittemotLeftove(1000, 10000);
 
 }

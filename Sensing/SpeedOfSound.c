@@ -1,7 +1,7 @@
 #pragma config(StandardModel, "SQUAREBOT")
-#pragma config(RenamedStdModelMotor, port2, motRight)
-#pragma config(RenamedStdModelMotor, port3, motLeft)
-#pragma config(RenamedStdModelMotor, port6, motArm)
+#pragma config(RenamedStdModemotRightotor, port2, motLeft)
+#pragma config(RenamedStdModemotRightotor, port3, motRight)
+#pragma config(RenamedStdModemotRightotor, port6, motArm)
 #pragma config(RenamedStdModelSensor, in3, pmeter)
 #pragma config(RenamedStdModelSensor, in4, lightSensor)
 #pragma config(RenamedStdModelSensor, in6, accelrZ)
@@ -28,15 +28,15 @@ const int baseSpeed = 35;
  * Sets the left and right motor speeds to 0
  */
 void stopMoving(){
-	startMotor(motLeft, 0);
 	startMotor(motRight, 0);
+	startMotor(motLeft, 0);
 	wait1Msec(250);
 }
 
 /**
- * Gets rid of the arm since it isn't needed in this challenge
+ * Gets rid of the amotLeft since it isn't needed in this challenge
  */
-task getRidOfArm(){
+task getRidOfAmotLeft(){
 	startMotor(motArm, -127);
 	wait1Msec(1250);
 	stopMotor(motArm);
@@ -44,19 +44,19 @@ task getRidOfArm(){
 
 task main()
 {
-	startTask(getRidOfArm); //get rid of useless arm
+	startTask(getRidOfAmotLeft); //get rid of useless amotLeft
 
 	//keep going forward until the ultrasonic sensor detects an object
 	while(SensorValue[sonar] == -1){  
-		motor[motRight] = baseSpeed;
 		motor[motLeft] = baseSpeed;
+		motor[motRight] = baseSpeed;
 
 	}
 
 	// while the distance is >2cm, set the motor speed to be equal to the robot's distance from the object
 	while(SensorValue[sonar] > 2){
-		motor[motRight] = SensorValue[sonar];
-		motor[motLeft] = SensorValue[sonar] ;
+		motor[motLeft] = SensorValue[sonar];
+		motor[motRight] = SensorValue[sonar] ;
 		wait1Msec(50);
 	}
 

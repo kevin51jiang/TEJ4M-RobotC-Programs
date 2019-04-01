@@ -3,16 +3,16 @@
 #pragma config(Sensor, in2,    midLine,        sensorLineFollower)
 #pragma config(Sensor, in3,    rightLine,      sensorLineFollower)
 #pragma config(Sensor, in4,    gyro,           sensorGyro)
-#pragma config(Sensor, in6,    armPot,         sensorPotentiometer)
+#pragma config(Sensor, in6,    amotLeftPot,         sensorPotentiometer)
 #pragma config(Sensor, dgtl1,  encodeRight,    sensorQuadEncoder)
 #pragma config(Sensor, dgtl3,  encodeLeft,     sensorQuadEncoder)
 #pragma config(Sensor, dgtl6,  touchSensor,    sensorTouch)
 #pragma config(Sensor, dgtl8,  sonar,          sensorSONAR_cm)
 #pragma config(Sensor, I2C_1,  rightIME,       sensorQuadEncoderOnI2CPort,    , AutoAssign )
 #pragma config(Sensor, I2C_2,  leftIME,        sensorQuadEncoderOnI2CPort,    , AutoAssign )
-#pragma config(Sensor, I2C_3,  armIME,         sensorQuadEncoderOnI2CPort,    , AutoAssign )
-#pragma config(Motor,  port2,           motRight,      tmotorVex393_MC29, openLoop, reversed, driveRight, encoderPort, I2C_1)
-#pragma config(Motor,  port3,           motLeft,       tmotorVex393_MC29, openLoop, driveLeft, encoderPort, I2C_2)
+#pragma config(Sensor, I2C_3,  amotLeftIME,         sensorQuadEncoderOnI2CPort,    , AutoAssign )
+#pragma config(Motor,  port2,           motLeft,      tmotorVex393_MC29, openLoop, reversed, driveRight, encoderPort, I2C_1)
+#pragma config(Motor,  port3,           motRight,       tmotorVex393_MC29, openLoop, driveLeft, encoderPort, I2C_2)
 #pragma config(Motor,  port6,           motArm,        tmotorVex393_MC29, openLoop, encoderPort, I2C_3)
 #pragma config(DatalogSeries, 0, "LeftFollow", Sensors, Sensor, in1, 50)
 #pragma config(DatalogSeries, 1, "MidFollow", Sensors, Sensor, in2, 50)
@@ -48,8 +48,8 @@ void resetEncoders(){
  * Waits for 250ms to make sure the robot has stopped / has no more momentum.
  */
 void stopMoving(){
-	startMotor(motLeft, 0);
 	startMotor(motRight, 0);
+	startMotor(motLeft, 0);
 	wait1Msec(250);
 }
 
@@ -86,16 +86,16 @@ void move(int dist){
 
 		//left wheels
 		if(abs(SensorValue[encodeRight]) < abs(numDegreeRot)) {
-			startMotor(motLeft, 127 * modifier); //if the left wheels haven't reached their rotation quota, keep them rotating
+			startMotor(motRight, 127 * modifier); //if the left wheels haven't reached their rotation quota, keep them rotating
 			} else {
-			stopMotor(motLeft); //if they have, stop the left wheels
+			stopMotor(motRight); //if they have, stop the left wheels
 		}
 
 		//right wheels
 		if(abs(SensorValue[encodeLeft]) < abs(numDegreeRot)) {
-			startMotor(motRight, 127 * modifier); //if the right wheels haven't reached their rotation quota, keep them rotating
+			startMotor(motLeft, 127 * modifier); //if the right wheels haven't reached their rotation quota, keep them rotating
 			} else {
-			stopMotor(motRight); //if they have, stop the right wheels
+			stopMotor(motLeft); //if they have, stop the right wheels
 		}
 	}
 
@@ -109,7 +109,7 @@ void move(int dist){
  */
 void turn(char direction){
 	int modifier;
-	int numDegreeRot = 362 * rand() % 500 + 1; //determine the number of degrees to rotate based on a random number
+	int numDegreeRot = 362 * rand() % 500 + 1; //detemotLeftine the number of degrees to rotate based on a random number
 
 	stopMoving(); //make sure robot isn't moving anymore
 	resetEncoders(); //make sure encoder values are clean for the turn
@@ -130,15 +130,15 @@ void turn(char direction){
 
 				//if it's the left that didn't reach the quota, let the left wheel turn
 				if(abs(SensorValue[encodeLeft]) < abs(numDegreeRot)) {
-					startMotor(motLeft, 63 * modifier);
+					startMotor(motRight, 63 * modifier);
 					} else {
-					stopMotor(motLeft);
+					stopMotor(motRight);
 				}
 				//if it's the right that didn't reach the quota, let the right wheel turn
 				if(abs(SensorValue[encodeRight]) < abs(numDegreeRot)) {
-					startMotor(motRight, 63 * -1 * modifier);
+					startMotor(motLeft, 63 * -1 * modifier);
 					} else {
-					motor[motRight] = 0;
+					motor[motLeft] = 0;
 
 				}
 		//wait to make sure the CPU isn't always overloaded
@@ -151,10 +151,10 @@ void turn(char direction){
 }
 
 /**
- * Gets rid of the arm.
- * Useful in case the arm gets in the way of movements, hits obstacles, etc.
+ * Gets rid of the amotLeft.
+ * Useful in case the amotLeft gets in the way of movements, hits obstacles, etc.
  */
-task getRidOfArm(){
+task getRidOfAmotLeft(){
 	startMotor(motArm, -127);
 	wait1Msec(1250);
 	stopMotor(motArm);
@@ -165,15 +165,15 @@ task getRidOfArm(){
  * lvl is between -127 and 127.
  */
 void setMotors(int lvl){
-	motor[motLeft] = lvl;
 	motor[motRight] = lvl;
+	motor[motLeft] = lvl;
 }
 
 
 task main() {
 
 	const int BLACK = 2000; //if the line follower has a reading of >2000, then it is over a black line
-	startTask(getRidOfArm); //get rid of the arm since it isn't necessary
+	startTask(getRidOfAmotLeft); //get rid of the amotLeft since it isn't necessary
 
 
 	while(true){

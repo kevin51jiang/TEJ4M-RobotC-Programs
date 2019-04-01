@@ -3,16 +3,16 @@
 #pragma config(Sensor, in2,    midLine,        sensorLineFollower)
 #pragma config(Sensor, in3,    rightLine,      sensorLineFollower)
 #pragma config(Sensor, in4,    gyro,           sensorGyro)
-#pragma config(Sensor, in6,    armPot,         sensorPotentiometer)
+#pragma config(Sensor, in6,    amotLeftPot,         sensorPotentiometer)
 #pragma config(Sensor, dgtl1,  rightEncoder,   sensorQuadEncoder)
 #pragma config(Sensor, dgtl3,  leftEncoder,    sensorQuadEncoder)
 #pragma config(Sensor, dgtl6,  touchSensor,    sensorTouch)
 #pragma config(Sensor, dgtl8,  sonarSensor,    sensorSONAR_cm)
 #pragma config(Sensor, I2C_1,  rightIME,       sensorQuadEncoderOnI2CPort,    , AutoAssign )
 #pragma config(Sensor, I2C_2,  leftIME,        sensorQuadEncoderOnI2CPort,    , AutoAssign )
-#pragma config(Sensor, I2C_3,  armIME,         sensorQuadEncoderOnI2CPort,    , AutoAssign )
-#pragma config(Motor,  port2,           motRight,      tmotorVex393_MC29, openLoop, reversed, driveRight, encoderPort, I2C_1)
-#pragma config(Motor,  port3,           motLeft,       tmotorVex393_MC29, openLoop, driveLeft, encoderPort, I2C_2)
+#pragma config(Sensor, I2C_3,  amotLeftIME,         sensorQuadEncoderOnI2CPort,    , AutoAssign )
+#pragma config(Motor,  port2,           motLeft,      tmotorVex393_MC29, openLoop, reversed, driveRight, encoderPort, I2C_1)
+#pragma config(Motor,  port3,           motRight,       tmotorVex393_MC29, openLoop, driveLeft, encoderPort, I2C_2)
 #pragma config(Motor,  port6,           motArm,        tmotorVex393_MC29, openLoop, encoderPort, I2C_3)
 #pragma config(DatalogSeries, 0, "LeftFollow", Sensors, Sensor, in1, 50)
 #pragma config(DatalogSeries, 1, "MidFollow", Sensors, Sensor, in2, 50)
@@ -28,13 +28,13 @@ The best part is that it can be easily adjusted based on difficulty (move the ji
 ++++++++++++++++*/
 void stopMoving(){
 
-	startMotor(motLeft, 0);
 	startMotor(motRight, 0);
+	startMotor(motLeft, 0);
 	wait1Msec(250);
 }
 
 
-task getRidOfArm(){
+task getRidOfAmotLeft(){
 	startMotor(motArm, -127);
 	wait1Msec(1250);
 	stopMotor(motArm);
@@ -62,19 +62,19 @@ int jitter(tMotor mPrimary, tMotor mSecondary, int jitterTime){
 task main()
 {
 	const int timePerJitter = 100;
-	startTask(getRidOfArm);
+	startTask(getRidOfAmotLeft);
 	while(true){
 		//Plan
 		//Jitter both ways, figure out which returns the more +ve, number, then only move in that direction(using only 1 motor)
 		int leftReading, rightReading;
-		leftReading = jitter(motRight, motLeft, timePerJitter);
+		leftReading = jitter(motLeft, motRight, timePerJitter);
 
-		rightReading = jitter(motLeft, motRight, timePerJitter);
+		rightReading = jitter(motRight, motLeft, timePerJitter);
 		tMotor toMove;
 		if(leftReading > rightReading){
-			toMove = motRight;
-		} else {
 			toMove = motLeft;
+		} else {
+			toMove = motRight;
 		}
 		startMotor(toMove, 100);
 		wait1Msec(timePerJitter * 3/4);

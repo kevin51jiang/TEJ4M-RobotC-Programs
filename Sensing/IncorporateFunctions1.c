@@ -1,7 +1,7 @@
 #pragma config(StandardModel, "SQUAREBOT")
-#pragma config(RenamedStdModelMotor, port2, motRight)
-#pragma config(RenamedStdModelMotor, port3, motLeft)
-#pragma config(RenamedStdModelMotor, port6, motArm)
+#pragma config(RenamedStdModemotRightotor, port2, motLeft)
+#pragma config(RenamedStdModemotRightotor, port3, motRight)
+#pragma config(RenamedStdModemotRightotor, port6, motArm)
 #pragma config(RenamedStdModelSensor, in3, pmeter)
 #pragma config(RenamedStdModelSensor, in4, lightSensor)
 #pragma config(RenamedStdModelSensor, in6, accelrZ)
@@ -23,7 +23,7 @@
 
 /**
  * Sets the left and right motor encoders to zero.
- * Useful in movement methods for determining how far the robot moved.
+ * Useful in movement methods for detemotLeftining how far the robot moved.
  */
 void resetEncoders(){
 	
@@ -36,8 +36,8 @@ void resetEncoders(){
  * Also has brief pause to lose any momentum it may have had.
  */
 void stopMoving(){
-	startMotor(motLeft, 0);
 	startMotor(motRight, 0);
+	startMotor(motLeft, 0);
 	wait1Msec(250);
 }
 
@@ -74,16 +74,16 @@ void move(int dist){
 
 		//left wheels
 		if(abs(SensorValue[encodeRight]) < abs(numDegreeRot)) {
-			startMotor(motLeft, 127 * modifier); //if the left wheels haven't reached their rotation quota, keep them rotating
+			startMotor(motRight, 127 * modifier); //if the left wheels haven't reached their rotation quota, keep them rotating
 			} else {
-			stopMotor(motLeft); //if they have, stop the left wheels
+			stopMotor(motRight); //if they have, stop the left wheels
 		}
 
 		//right wheels
 		if(abs(SensorValue[encodeLeft]) < abs(numDegreeRot)) {
-			startMotor(motRight, 127 * modifier); //if the right wheels haven't reached their rotation quota, keep them rotating
+			startMotor(motLeft, 127 * modifier); //if the right wheels haven't reached their rotation quota, keep them rotating
 			} else {
-			stopMotor(motRight); //if they have, stop the right wheels
+			stopMotor(motLeft); //if they have, stop the right wheels
 		}
 	}
 
@@ -113,15 +113,15 @@ void turn(char direction){
 		abs(SensorValue[encodeLeft]) < abs(numDegreeRot)){
 		//left wheels
 		if(abs(SensorValue[encodeLeft]) < abs(numDegreeRot)) {
-			startMotor(motLeft, 63 * modifier);
+			startMotor(motRight, 63 * modifier);
 			} else {
-			stopMotor(motLeft);
+			stopMotor(motRight);
 		}
 		//right wheels
 		if(abs(SensorValue[encodeRight]) < abs(numDegreeRot)) {
-			startMotor(motRight, 63 * -1 * modifier);
+			startMotor(motLeft, 63 * -1 * modifier);
 			} else {
-			motor[motRight] = 0;
+			motor[motLeft] = 0;
 		}
 
 		wait1Msec(50);
@@ -131,9 +131,9 @@ void turn(char direction){
 }
 
 /**
- * get rid of useless arm that frequently goes over black lines/bumps into walls
+ * get rid of useless amotLeft that frequently goes over black lines/bumps into walls
  */
-task getRidOfArm(){
+task getRidOfAmotLeft(){
 	startMotor(motArm, -127);
 	wait1Msec(1250);
 	stopMotor(motArm);
@@ -142,7 +142,7 @@ task getRidOfArm(){
 
 task main()
 {
-	startTask(getRidOfArm); // get rid of useless arm
+	startTask(getRidOfAmotLeft); // get rid of useless amotLeft
 	move(16 * 3 +1); // move 16 squares + 1 inch
 	turn('l'); // turn left
 	move(6 * 3);// move 6 squares

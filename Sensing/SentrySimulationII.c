@@ -1,7 +1,7 @@
 #pragma config(StandardModel, "SQUAREBOT")
-#pragma config(RenamedStdModelMotor, port2, motRight)
-#pragma config(RenamedStdModelMotor, port3, motLeft)
-#pragma config(RenamedStdModelMotor, port6, motArm)
+#pragma config(RenamedStdModemotRightotor, port2, motLeft)
+#pragma config(RenamedStdModemotRightotor, port3, motRight)
+#pragma config(RenamedStdModemotRightotor, port6, motArm)
 #pragma config(RenamedStdModelSensor, in3, pmeter)
 #pragma config(RenamedStdModelSensor, in4, lightSensor)
 #pragma config(RenamedStdModelSensor, in6, accelrZ)
@@ -20,8 +20,8 @@ void resetEncoders(){
 
 void stopMoving(){
 
-	startMotor(motLeft, 0);
 	startMotor(motRight, 0);
+	startMotor(motLeft, 0);
 	wait1Msec(250);
 }
 
@@ -55,15 +55,15 @@ void move(int dist){
 
 				//left wheels
 				if(abs(SensorValue[encodeRight]) < abs(numDegreeRot)) {
-					startMotor(motLeft, 127 * modifier);
-					} else {
-					stopMotor(motLeft);
-				}
-				//right wheels
-				if(abs(SensorValue[encodeLeft]) < abs(numDegreeRot)) {
 					startMotor(motRight, 127 * modifier);
 					} else {
 					stopMotor(motRight);
+				}
+				//right wheels
+				if(abs(SensorValue[encodeLeft]) < abs(numDegreeRot)) {
+					startMotor(motLeft, 127 * modifier);
+					} else {
+					stopMotor(motLeft);
 				}
 			} else {
 
@@ -99,15 +99,15 @@ void turn(char direction){
 
 				//left wheels
 				if(abs(SensorValue[encodeLeft]) < abs(numDegreeRot)) {
-					startMotor(motLeft, 63 * modifier);
+					startMotor(motRight, 63 * modifier);
 					} else {
-					stopMotor(motLeft);
+					stopMotor(motRight);
 				}
 				//right wheels
 				if(abs(SensorValue[encodeRight]) < abs(numDegreeRot)) {
-					startMotor(motRight, 63 * -1 * modifier);
+					startMotor(motLeft, 63 * -1 * modifier);
 					} else {
-					motor[motRight] = 0;
+					motor[motLeft] = 0;
 
 				}
 		wait1Msec(50);
@@ -117,7 +117,7 @@ void turn(char direction){
 }
 
 
-task getRidOfArm(){
+task getRidOfAmotLeft(){
 	startMotor(motArm, -127);
 	wait1Msec(1250);
 	stopMotor(motArm);
@@ -125,7 +125,7 @@ task getRidOfArm(){
 
 task main()
 {
-	startTask(getRidOfArm);
+	startTask(getRidOfAmotLeft);
 	for(int i = 0; i< 2; i++){
 		move(7 * 12 + 4);
 		turn('r');

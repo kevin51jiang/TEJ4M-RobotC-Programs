@@ -1,9 +1,9 @@
 
 
 #pragma config(StandardModel, "SQUAREBOT")
-#pragma config(RenamedStdModelMotor, port2, motRight)
-#pragma config(RenamedStdModelMotor, port3, motLeft)
-#pragma config(RenamedStdModelMotor, port6, motArm)
+#pragma config(RenamedStdModemotRightotor, port2, motLeft)
+#pragma config(RenamedStdModemotRightotor, port3, motRight)
+#pragma config(RenamedStdModemotRightotor, port6, motArm)
 #pragma config(RenamedStdModelSensor, in3, pmeter)
 #pragma config(RenamedStdModelSensor, in4, lightSensor)
 #pragma config(RenamedStdModelSensor, in6, accelrZ)
@@ -23,8 +23,8 @@
  * Sets left and right motors to zero to stop them from moving
  */
 void stopMoving(){
-	startMotor(motLeft, 0);
 	startMotor(motRight, 0);
+	startMotor(motLeft, 0);
 }
 
 
@@ -35,7 +35,7 @@ void stopMoving(){
 void move(int dist){
 	int modifier;
 
-	// determines if it is supposed to move forwards or backwards
+	// detemotLeftines if it is supposed to move forwards or backwards
 	if(dist > 0){
 		modifier = 1;
 		} else {
@@ -45,8 +45,8 @@ void move(int dist){
 
 	// a counter to keep the motors moving.
 	while(dist > 0) {
-		startMotor(motRight, 127 * modifier); //multiply it by modifier in case the distance is supposed to be backwards
 		startMotor(motLeft, 127 * modifier); //multiply it by modifier in case the distance is supposed to be backwards
+		startMotor(motRight, 127 * modifier); //multiply it by modifier in case the distance is supposed to be backwards
 		wait1Msec(580);
 		dist--;
 	}
@@ -73,8 +73,8 @@ void turn(char direction){
 	wait1Msec(1500); // make sure robot is stopped
 
 	//turn with the motors going in opposite directions
-	startMotor(motLeft, 64 * modifier);
-	startMotor(motRight, 64 * -1 * modifier);
+	startMotor(motRight, 64 * modifier);
+	startMotor(motLeft, 64 * -1 * modifier);
 	wait1Msec(1250);
 
 	//stop the motors to keep the method self contained.

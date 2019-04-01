@@ -1,7 +1,7 @@
 #pragma config(StandardModel, "SQUAREBOT")
-#pragma config(RenamedStdModelMotor, port2, motRight)
-#pragma config(RenamedStdModelMotor, port3, motLeft)
-#pragma config(RenamedStdModelMotor, port6, motArm)
+#pragma config(RenamedStdModemotRightotor, port2, motLeft)
+#pragma config(RenamedStdModemotRightotor, port3, motRight)
+#pragma config(RenamedStdModemotRightotor, port6, motArm)
 #pragma config(RenamedStdModelSensor, in3, pmeter)
 #pragma config(RenamedStdModelSensor, in4, lightSensor)
 #pragma config(RenamedStdModelSensor, in6, accelrZ)
@@ -16,13 +16,13 @@ const int baseSpeed = 35;
 
 void stopMoving(){
 
-	startMotor(motLeft, 0);
 	startMotor(motRight, 0);
+	startMotor(motLeft, 0);
 	wait1Msec(250);
 }
 
 
-task getRidOfArm(){
+task getRidOfAmotLeft(){
 	startMotor(motArm, -127);
 	wait1Msec(1250);
 	stopMotor(motArm);
@@ -30,23 +30,23 @@ task getRidOfArm(){
 
 task main()
 {
-	startTask(getRidOfArm);
+	startTask(getRidOfAmotLeft);
 
 	while(true){
 
 
 		//keep turning until object is detected
 		while(SensorValue[sonar] == -1){
-			motor[motRight] = -1 * baseSpeed;
-			motor[motLeft] = baseSpeed;
+			motor[motLeft] = -1 * baseSpeed;
+			motor[motRight] = baseSpeed;
 		}
 		stopMoving();
 
 		// move forward until the object 15cm
 
 		while(SensorValue[sonar] > 4){
-			motor[motRight] =  baseSpeed;
-		  motor[motLeft] = baseSpeed;
+			motor[motLeft] =  baseSpeed;
+		  motor[motRight] = baseSpeed;
 		}
 		stopMoving();
 	}
